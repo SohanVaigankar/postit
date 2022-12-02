@@ -23,7 +23,7 @@ const Home = () => {
         <Container >
           <Grid container spacing={3}>
             {post &&
-              post.map((item) => {
+              post.reverse().map((item) => {
                 return (
                   <Grid key={item.id} item xs={12} sm={6} md={4} lg={3}>
                     <Posts info={item} user={user} />

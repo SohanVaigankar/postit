@@ -10,48 +10,27 @@ import {
   Input,
 } from "@mui/material";
 import { Edit } from "@mui/icons-material";
-import axios from "axios";
 import { usePostContext } from "../context/PostContext";
 
 const EditModal = ({ info }) => {
   const [open, setOpen] = useState(false);
   const { post, setPost } = usePostContext();
-
-  const handleEditOpen = () => {
-    setOpen(true);
-  };
-  const handleEditClose = () => {
-    setOpen(false);
-  };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(event.target.title.value);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     let data = {
       ...info,
-      title: event.target.title.value,
-      body: event.target.description.value,
+      title: e.target.title.value,
+      body: e.target.description.value,
     };
-    axios
-      .put(`https://jsonplaceholder.typicode.com/posts/${info.id}`, data)
-      .then((res) => {
-        let arr = post.map((item) => {
-          if (item.id === res.data.id) {
-            return res.data;
-          } else {
-            return item;
-          }
-        });
-        setPost(arr);
-        setOpen(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    const filteredPosts = post.filter((eachPost) => eachPost.id !== info.id);
+    await setPost([...filteredPosts, data]);
+    setOpen(false);
   };
 
   return (
     <div>
-      <Button onClick={handleEditOpen}>
+      <Button onClick={() => setOpen(true)}>
         <Edit />
       </Button>
       <Modal
@@ -63,7 +42,7 @@ const EditModal = ({ info }) => {
           justifyContent: "center",
         }}
         open={open}
-        onClose={handleEditClose}
+        onClose={() => setOpen(false)}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -84,13 +63,13 @@ const EditModal = ({ info }) => {
                 borderRadius={2}
                 sx={{ width: "100%" }}
               >
-                <Typography textAlign="center">Edit </Typography>
+                <Typography style={{ textAlign: "center" }}>Edit </Typography>
                 <Box
                   sx={{ width: "100%" }}
                   display="flex"
                   flexDirection="column"
                 >
-                  <InputLabel textAlign="start">Title</InputLabel>
+                  <InputLabel>Title</InputLabel>
                   <Input
                     size="small"
                     name="title"
@@ -100,7 +79,7 @@ const EditModal = ({ info }) => {
                   />
                 </Box>
                 <Box sx={{ width: "100%" }}>
-                  <InputLabel textAlign="start">Description</InputLabel>
+                  <InputLabel>Description</InputLabel>
                   <Input
                     size="medium"
                     name="description"
@@ -114,7 +93,11 @@ const EditModal = ({ info }) => {
                 <Button
                   type="submit"
                   variant="outlined"
-                  style={{ color: "#03045E", borderColor:"#03045E", width: "50%" }}
+                  style={{
+                    color: "#03045E",
+                    borderColor: "#03045E",
+                    width: "50%",
+                  }}
                 >
                   save
                 </Button>

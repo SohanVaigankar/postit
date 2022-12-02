@@ -23,7 +23,7 @@ function App() {
     axios
       .get("https://jsonplaceholder.typicode.com/posts")
       .then((res) => {
-        setPost(res.data);
+        setPost((res.data).reverse());
       })
       .catch((error) => {
         console.error(error);

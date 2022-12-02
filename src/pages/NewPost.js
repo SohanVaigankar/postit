@@ -8,37 +8,26 @@ import {
   Modal,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 // context
 import { usePostContext } from "../context/PostContext";
-import { useAuthContext } from "../context/AuthContext";
 
 const NewPost = () => {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
   const { post, setPost } = usePostContext();
   const [open, setOpen] = useState(true);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       title: e.target.title.value,
       body: e.target.description.value,
-      userId: user.uid,
+      id: String(post.length + 69),
     };
-    axios
-      .post("https://jsonplaceholder.typicode.com/posts", data)
-      .then((res) => {
-        console.log(res.data);
-        setPost([...post, res.data]);
-        navigate("/");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    await setPost([...post, data]);
+    navigate("/");
   };
 
   const handleModalClose = (e) => {
@@ -66,17 +55,7 @@ const NewPost = () => {
         }}
       >
         <Fade in={open}>
-          <Box
-            // height="100vh"
-            // width="100%"
-            // display="flex"
-            // justifyContent="center"
-            // alignItems="Center"
-            // position="fixed"
-            // top="0"
-            zIndex="2000"
-            // sx={{ width: 300 }}
-          >
+          <Box zIndex="2000">
             <form onSubmit={handleSubmit}>
               <Box
                 border=".5px solid #03045E"
@@ -88,7 +67,7 @@ const NewPost = () => {
                 alignItems="center"
                 backgroundColor="#90E0EF"
               >
-                <Typography style={{ fontSize: "1.5rem" }} textAlign="center">
+                <Typography style={{ fontSize: "1.5rem", textAlign: "center" }}>
                   New Post
                 </Typography>
                 <TextField name="title" label="title" size="small" required />
@@ -100,7 +79,6 @@ const NewPost = () => {
                   rows={5}
                   required
                   style={{ width: "100%" }}
-                  
                 />
                 <Box
                   width="100%"
